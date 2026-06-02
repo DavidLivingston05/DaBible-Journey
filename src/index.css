@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@1,400;1,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Playfair Display", serif;
+}
+
+@layer base {
+  body {
+    @apply antialiased selection:bg-emerald-500/30 selection:text-emerald-500;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-xl bg-black/40 border border-white/5;
+  }
+
+  .nav-pill {
+    @apply px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all active:scale-95;
+  }
+
+  /* Range input styling for better mobile support */
+  input[type="range"].custom-slider {
+    @apply appearance-none bg-transparent cursor-pointer relative z-20 w-full;
+    -webkit-appearance: none;
+    touch-action: none;
+  }
+
+  input[type="range"].custom-slider::-webkit-slider-thumb {
+    @apply appearance-none w-8 h-8 rounded-full border-0 bg-transparent;
+    -webkit-appearance: none;
+    cursor: grab;
+  }
+
+  input[type="range"].custom-slider::-moz-range-thumb {
+    @apply w-8 h-8 rounded-full border-0 bg-transparent cursor-grab;
+  }
+
+  input[type="range"].custom-slider:active::-webkit-slider-thumb {
+    @apply cursor-grabbing;
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 10px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

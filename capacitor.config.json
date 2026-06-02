@@ -1,0 +1,6 @@
+{
+  "appId": "com.scripturejourney.app",
+  "appName": "Scripture Journey",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

@@ -1,0 +1,90 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helper Functions ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email.lower() == 'davidlivingston1824@gmail.com'
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Entity Validation ---
+    function isValidMember(data) {
+      return data.id is string 
+        && data.name is string && data.name.size() > 0
+        && (data.ownerId == null || data.ownerId is string)
+        && (data.chaptersRead == null || data.chaptersRead is int)
+        && (data.bookProgress == null || data.bookProgress is map);
+    }
+
+    // --- Collection Routes ---
+    
+    // Admins collection (Manual setup required for first admin)
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /members/{memberId} {
+      allow get, list: if true;
+
+      allow create: if (isSignedIn() || isAdmin()) 
+        && isValidId(memberId)
+        && (isAdmin() || incoming().ownerId == request.auth.uid || memberId == request.auth.uid);
+
+      allow update: if (isAdmin() || isOwner(memberId) || (isSignedIn() && existing().ownerId == request.auth.uid))
+        && isValidId(memberId)
+        && (
+          isAdmin() || (
+            incoming().id == existing().id &&
+            (incoming().ownerId == existing().ownerId || existing().ownerId == null)
+          )
+        );
+
+      allow delete: if isAdmin() || isOwner(memberId) || (isSignedIn() && existing().ownerId == request.auth.uid);
+    }
+
+    // Reflections collection (Community thoughts)
+    match /reflections/{reflectionId} {
+      allow read: if true;
+      allow create: if isSignedIn() 
+        && incoming().authorId == request.auth.uid
+        && incoming().text is string && incoming().text.size() > 0 && incoming().text.size() <= 1000;
+      allow delete: if isAdmin() || (isSignedIn() && existing().authorId == request.auth.uid);
+      allow update: if false; // Reflections are immutable for transparency
+    }
+
+    // Reminders collection (Pastor's Broadcast)
+    match /reminders/{reminderId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

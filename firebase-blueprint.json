@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "Member": {
+      "title": "Member",
+      "description": "A congregation member tracking their Bible reading progress",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "User ID matching their Auth UID" },
+        "name": { "type": "string", "description": "Display name of the member" },
+        "age": { "type": "integer", "description": "Age of the member" },
+        "chaptersRead": { "type": "integer", "description": "Total chapters read across all books" },
+        "bookProgress": { 
+          "type": "object", 
+          "description": "Map of book IDs to chapters read in that book"
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "chaptersRead", "bookProgress", "createdAt", "updatedAt"]
+    },
+    "Reflection": {
+      "title": "Reflection",
+      "description": "A thought or reflection shared by a member about their Bible reading",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string", "description": "The content of the reflection" },
+        "authorName": { "type": "string", "description": "Name of the person who shared it" },
+        "authorId": { "type": "string", "description": "UID of the author" },
+        "memberId": { "type": "string", "description": "ID of the specific member profile this reflection is about (optional)" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["text", "authorName", "authorId", "createdAt"]
+    },
+    "Reminder": {
+      "title": "Reminder",
+      "description": "A daily announcement or scripture reminder broadcasted by the pastor/admin",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string", "description": "The custom broadcast text or verse" },
+        "senderName": { "type": "string", "description": "The name of the admin who sent the reminder (e.g. Pastor David)" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["text", "senderName", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/members/{memberId}": {
+      "schema": "Member",
+      "description": "Public profiles of members with their progress"
+    },
+    "/reflections/{reflectionId}": {
+      "schema": "Reflection",
+      "description": "Public community reflections"
+    },
+    "/reminders/{reminderId}": {
+      "schema": "Reminder",
+      "description": "Pastor's daily broadcast reminders"
+    }
+  }
+}

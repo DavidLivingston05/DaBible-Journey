@@ -1,0 +1,8 @@
+{
+  "name": "Scripture Journey",
+  "description": "A comprehensive Bible reading plan tracker for congregations and individuals to monitor progress through the 1189 chapters of the Bible.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
